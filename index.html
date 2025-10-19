@@ -13,6 +13,7 @@
     html, body { height: 100%; }
     body { margin: 0; font-family: 'Poppins', system-ui, sans-serif; color: #fff; overflow: hidden; background: #0b0b12; }
 
+    /* Background */
     .bg-layer { position: fixed; inset: 0; background-position: center; background-size: cover; background-repeat: no-repeat; filter: brightness(0.72) saturate(1.05); transition: opacity 1200ms ease-in-out, transform 8s ease; will-change: opacity, transform; }
     .bg-a { z-index: -2; } .bg-b { z-index: -3; } .bg-layer.zoom { transform: scale(1.05); }
     .overlay { position: fixed; inset: 0; pointer-events: none; z-index: -1; background: radial-gradient(100% 120% at 50% 50%, rgba(0,0,0,0) 0%, rgba(0,0,0,0.35) 62%, rgba(0,0,0,0.55) 100%), linear-gradient(180deg, rgba(0,0,0,0.12) 0%, rgba(0,0,0,0.45) 100%); }
@@ -26,7 +27,7 @@
 
     .controls { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; align-items: center; margin-top: 18px; }
 
-    button, .ghost { cursor: pointer; border: 1px solid rgba(255,255,255,0.25); background: rgba(255,255,255,0.12); color: #fff; border-radius: 14px; padding: 10px 16px; font-weight: 600; transition: transform 120ms ease, background 200ms ease; backdrop-filter: blur(6px); }
+    button { cursor: pointer; border: 1px solid rgba(255,255,255,0.25); background: rgba(255,255,255,0.12); color: #fff; border-radius: 14px; padding: 10px 16px; font-weight: 600; transition: transform 120ms ease, background 200ms ease; backdrop-filter: blur(6px); }
     button:hover { transform: translateY(-1px); background: rgba(255,255,255,0.18); }
 
     .footer { position: fixed; left: 50%; bottom: 14px; transform: translateX(-50%); font-size: 12px; opacity: 0.7; background: rgba(0,0,0,0.35); border-radius: 10px; border: 1px solid rgba(255,255,255,0.16); padding: 6px 10px; }
@@ -47,13 +48,12 @@
     .hud-left::before, .hud-right::before { display: inline-block; margin-right: 8px; filter: drop-shadow(0 0 6px rgba(255,120,160,0.6)); }
     .hud-left::before { content: '⏱️'; }
     .hud-right::before { content: '⏳'; }
-      /* Music button */
+
+    /* Music button */
     .music-btn { position: fixed; right: 18px; bottom: 18px; width: 48px; height: 48px; border: none; border-radius: 50%; background: rgba(30,10,20,0.55); color: #fff; font-size: 20px; display: none; cursor: pointer; box-shadow: 0 0 18px rgba(255,120,160,0.35), 0 6px 22px rgba(0,0,0,0.25); backdrop-filter: blur(8px); z-index: 60; }
     .music-btn:hover { transform: translateY(-2px); }
     .music-btn:active { transform: translateY(0); }
-    .music-btn:hover { transform: translateY(-2px); }
-    .music-btn:active { transform: translateY(0); }
-      
+
     /* ===== Mobile fix: sayaçları üst üste binmeden sırala ===== */
     @media (max-width: 600px) {
       .hud { font-size: 13px; }
@@ -68,11 +68,11 @@
   <div class="bg-layer bg-b" id="bgB"></div>
   <div class="overlay"></div>
 
-  
   <!-- Background music + control -->
   <audio id="bgMusic" src="love.mp3" preload="auto" loop muted></audio>
   <button id="musicBtn" class="music-btn" aria-label="Müziği Aç/Kapat">🎵</button>
-<!-- HUD Counters -->
+
+  <!-- HUD Counters -->
   <div class="hud hud-left" id="elapsedHud" aria-live="polite"></div>
   <div class="hud hud-right" id="countdownHud" aria-live="polite"></div>
 
@@ -107,263 +107,83 @@
   <div class="footer">Made with ❤️ — Baran &lt;3</div>
 
   <script>
-  // ===== Config =====
-  const GATE = { password: 'perast' };
+    // ===== Config =====
+    const GATE = { password: 'perast' };
 
-  const IMAGE_URLS = [
-    'images/1.jpg','images/2.jpg','images/3.jpg','images/4.jpg','images/5.jpg',
-    'images/6.jpg','images/7.jpg','images/8.jpg','images/9.jpg','images/10.jpg','images/11.jpg'
-  ];
+    const IMAGE_URLS = ['images/1.jpg','images/2.jpg','images/3.jpg','images/4.jpg','images/5.jpg','images/6.jpg','images/7.jpg','images/8.jpg','images/9.jpg','images/10.jpg','images/11.jpg'];
+    const MESSAGES = [ 'Gülüşün beni benden alıyor.','Banana','Namnam','Sabah uyandığımda duyacağım ilk sesin sen oluşu beni çok mutlu ediyor','Seni her gördüğümde karnımda kelebekler uçuşuyor','Beraberken zamanın akışını unutuyorum','Bana kendimi hep güvende hissetiriyiorsun.','Hayallerimi daha büyük kurmamı sağlıyorsun.','Zor günlerimde bile bana iyi geliyorsun.','Hayatımda gördüğüm en ama en güzel insansın.','Güzel olmanın yanında kalbin de bir o kadar güzel.','Birlikteyken bu kalabalık şehir bile yapayalnızmışız gibi hissettiriyor.','Elini tutunca tamamlanmış hissediyorum'];
 
-  const MESSAGES = [
-    'Gülüşün beni benden alıyor.','Banana','Namnam',
-    'Sabah uyandığımda duyacağım ilk sesin sen oluşu beni çok mutlu ediyor',
-    'Seni her gördüğümde karnımda kelebekler uçuşuyor',
-    'Beraberken zamanın akışını unutuyorum',
-    'Bana kendimi hep güvende hissetiriyiorsun.',
-    'Hayallerimi daha büyük kurmamı sağlıyorsun.',
-    'Zor günlerimde bile bana iyi geliyorsun.',
-    'Hayatımda gördüğüm en ama en güzel insansın.',
-    'Güzel olmanın yanında kalbin de bir o kadar güzel.',
-    'Birlikteyken bu kalabalık şehir bile yapayalnızmışız gibi hissettiriyor.',
-    'Elini tutunca tamamlanmış hissediyorum'
-  ];
+    const BG_SLIDE_INTERVAL = 7000;
 
-  const BG_SLIDE_INTERVAL = 7000; // ms
+    // === Tarih sabitleri ===
+    // İlk buluşma: 14 Mart 2025 15:00 (yerel saat)
+    const FIRST_MEET = new Date(2025, 2, 14, 15, 0, 0);
+    // 1. yıl dönümü hedefi: 20 Nisan 2026 00:00 (yerel saat)
+    const ONE_YEAR = new Date(2026, 3, 20, 0, 0, 0);
 
-  // === Tarih sabitleri ===
-  // İlk buluşma: 14 Mart 2025 15:00 (yerel saat)
-  const FIRST_MEET = new Date(2025, 2, 14, 15, 0, 0);
-  // 1. yıl dönümü hedefi: 20 Nisan 2026 00:00 (yerel saat)
-  const ONE_YEAR   = new Date(2026, 3, 20, 0, 0, 0);
+    const $ = id => document.getElementById(id);
+    function makeDeck(n, avoid=-1){const arr=Array.from({length:n},(_,i)=>i);for(let i=n-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[arr[i],arr[j]]=[arr[j],arr[i]];}if(n>1&&avoid>=0&&arr[0]===avoid){[arr[0],arr[1]]=[arr[1],arr[0]];}return arr;}
 
-  // ===== Helpers =====
-  const $ = (id) => document.getElementById(id);
-  function makeDeck(n, avoid = -1){
-    const arr = Array.from({length: n}, (_, i) => i);
-    for (let i = n - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [arr[i], arr[j]] = [arr[j], arr[i]];
-    }
-    if (n > 1 && avoid >= 0 && arr[0] === avoid){
-      [arr[0], arr[1]] = [arr[1], arr[0]];
-    }
-    return arr;
-  }
+    // Background deck
+    const bgA=$('bgA'),bgB=$('bgB');let active='A',curImg=-1,imgDeck=[],imgPtr=0;
+    function refillImg(){imgDeck=makeDeck(IMAGE_URLS.length,curImg);imgPtr=0;}
+    function setBgFromDeck(){if(!imgDeck.length||imgPtr>=imgDeck.length)refillImg();const i=imgDeck[imgPtr++];const next=active==='A'?bgB:bgA;const prev=active==='A'?bgA:bgB;next.style.backgroundImage = "url('" + IMAGE_URLS[i] + "')";next.style.opacity='0';void next.offsetWidth;next.classList.add('zoom');next.style.opacity='1';prev.style.opacity='0';prev.classList.remove('zoom');active=active==='A'?'B':'A';curImg=i;}
 
-  // ===== Background (deck + crossfade) =====
-  const bgA = $('bgA'), bgB = $('bgB');
-  let active = 'A';
-  let curImg = -1;
-  let imgDeck = [];
-  let imgPtr  = 0;
+    // Messages deck
+    const msgEl=$('message');let curMsg=-1,msgDeck=[],msgPtr=0;
+    function refillMsg(){msgDeck=makeDeck(MESSAGES.length,curMsg);msgPtr=0;}
+    function showMsg(){if(!msgDeck.length||msgPtr>=msgDeck.length)refillMsg();const i=msgDeck[msgPtr++];curMsg=i;msgEl.classList.remove('show');setTimeout(()=>{msgEl.textContent=MESSAGES[i];msgEl.classList.add('show');},140);}
 
-  function refillImg(){ imgDeck = makeDeck(IMAGE_URLS.length, curImg); imgPtr = 0; }
+    // HUD logic
+    const elapsedHud = document.getElementById('elapsedHud');
+    const countdownHud = document.getElementById('countdownHud');
 
-  function setBgFromDeck(){
-    if (!imgDeck.length || imgPtr >= imgDeck.length) refillImg();
-    const i = imgDeck[imgPtr++];
-    const next = active === 'A' ? bgB : bgA;
-    const prev = active === 'A' ? bgA : bgB;
-    next.style.backgroundImage = "url('" + IMAGE_URLS[i] + "')";
-    next.style.opacity = '0';
-    void next.offsetWidth; // force reflow
-    next.classList.add('zoom');
-    next.style.opacity = '1';
-    prev.style.opacity = '0';
-    prev.classList.remove('zoom');
-    active = active === 'A' ? 'B' : 'A';
-    curImg = i;
-  }
+    function addMonthsTo(date, months){ const d=new Date(date); const target=d.getMonth()+months; d.setMonth(target); return d; }
+    function diffMonthsDaysHours(from, to){ if (to < from) return { months: 0, days: 0, hours: 0 }; let months=(to.getFullYear()-from.getFullYear())*12 + (to.getMonth()-from.getMonth()); let anchor=addMonthsTo(from, months); if (anchor>to){ months--; anchor=addMonthsTo(from, months); } let ms=to-anchor; const dayMs=86400000; const days=Math.floor(ms/dayMs); ms-=days*dayMs; const hours=Math.floor(ms/3600000); return { months, days, hours }; }
+    function updateElapsed(){ const now=new Date(); const { months, days, hours } = diffMonthsDaysHours(FIRST_MEET, now); elapsedHud.textContent = `İlk buluşmadan geçen: ${months} ay ${days} gün ${hours} saat`; }
+    function updateCountdown(){ const now=new Date(); let ms=ONE_YEAR-now; if (ms<0) ms=0; const dayMs=86400000; const hourMs=3600000; const minMs=60000; const days=Math.floor(ms/dayMs); ms-=days*dayMs; const hours=Math.floor(ms/hourMs); ms-=hours*hourMs; const minutes=Math.floor(ms/minMs); countdownHud.textContent = `1 yıla kalan: ${days} gün ${hours} saat ${minutes} dakika`; }
+    function layoutHud(){ const gap=8; if (!elapsedHud||!countdownHud) return; if (window.innerWidth <= 600){ const h = elapsedHud.offsetHeight || 44; elapsedHud.style.left='12px'; elapsedHud.style.right='12px'; elapsedHud.style.top='12px'; elapsedHud.style.textAlign='center'; countdownHud.style.left='12px'; countdownHud.style.right='12px'; countdownHud.style.top=(12+h+gap)+'px'; countdownHud.style.textAlign='center'; } else { elapsedHud.style.left=''; elapsedHud.style.right=''; elapsedHud.style.top='12px'; elapsedHud.style.textAlign=''; countdownHud.style.left=''; countdownHud.style.right=''; countdownHud.style.top='12px'; countdownHud.style.textAlign=''; } }
+    function startHud(){ updateElapsed(); updateCountdown(); layoutHud(); setInterval(()=>{ updateElapsed(); updateCountdown(); }, 60000); }
+    window.addEventListener('resize', layoutHud);
 
-  // ===== Messages (deck) =====
-  const msgEl = $('message');
-  let curMsg = -1;
-  let msgDeck = [];
-  let msgPtr  = 0;
+    // Controls & gate
+    const nextBtn=$('nextMsgBtn'),imgBtn=$('shuffleImagesBtn'),gate=$('gate'),input=$('gateInput'),submit=$('gateSubmit');
+    let timer=null;function startSlide(){clearInterval(timer);timer=setInterval(setBgFromDeck,BG_SLIDE_INTERVAL);}
 
-  function refillMsg(){ msgDeck = makeDeck(MESSAGES.length, curMsg); msgPtr = 0; }
+    nextBtn.onclick=()=>showMsg();
+    imgBtn.onclick=()=>{setBgFromDeck();startSlide();};
 
-  function showMsg(){
-    if (!msgDeck.length || msgPtr >= msgDeck.length) refillMsg();
-    const i = msgDeck[msgPtr++];
-    curMsg = i;
-    msgEl.classList.remove('show');
-    setTimeout(() => { msgEl.textContent = MESSAGES[i]; msgEl.classList.add('show'); }, 140);
-  }
+    // Background music
+    const music = $('bgMusic');
+    const musicBtn = $('musicBtn');
+    let musicPlaying = false;
+    if (music) { music.volume = 0.6; music.play().catch(()=>{}); }
+    if (musicBtn) { musicBtn.addEventListener('click', async ()=>{ if (!music) return; try { if (!musicPlaying) { await music.play(); musicPlaying = true; musicBtn.textContent = '🔇'; } else { music.pause(); musicPlaying = false; musicBtn.textContent = '🎵'; } } catch(e){ console.warn('Müzik çalma hatası:', e); alert('Müzik başlatılamadı. Dosya yolu doğru mu? (love.mp3)'); } }); }
+    function fadeVolume(target=0.6, duration=800){ if(!music) return; const start=music.volume; const t0=performance.now(); function step(t){ const p=Math.min(1,(t-t0)/duration); music.volume = start + (target-start)*p; if(p<1) requestAnimationFrame(step);} requestAnimationFrame(step); }
 
-  // ===== HUD logic =====
-  const elapsedHud   = document.getElementById('elapsedHud');
-  const countdownHud = document.getElementById('countdownHud');
+    submit.onclick = async ()=>{
+      if (input.value === GATE.password){
+        gate.style.display='none';
+        $('app').removeAttribute('aria-hidden');
+        startSlide();
+        startHud();
+        showMsg();
+        if (musicBtn) musicBtn.style.display='block';
+        if (music){ try { music.muted=false; await music.play(); musicPlaying=true; musicBtn.textContent='🔇'; fadeVolume(0.6,800); } catch(e){ console.warn('Autoplay olmadı, butonla başlanabilir:', e); } }
+      } else { alert('Yanlış şifre 💫'); }
+    };
 
-  function addMonthsTo(date, months){ const d = new Date(date); d.setMonth(d.getMonth() + months); return d; }
-  function diffMonthsDaysHours(from, to){
-    if (to < from) return { months: 0, days: 0, hours: 0 };
-    let months = (to.getFullYear() - from.getFullYear()) * 12 + (to.getMonth() - from.getMonth());
-    let anchor = addMonthsTo(from, months);
-    if (anchor > to){ months -= 1; anchor = addMonthsTo(from, months); }
-    let ms = to - anchor;
-    const dayMs = 24 * 60 * 60 * 1000;
-    const days  = Math.floor(ms / dayMs); ms -= days * dayMs;
-    const hours = Math.floor(ms / (60 * 60 * 1000));
-    return { months, days, hours };
-  }
+    input.addEventListener('keydown', (e)=>{ if(e.key==='Enter') submit.click(); });
 
-  function updateElapsed(){
-    const now = new Date();
-    const { months, days, hours } = diffMonthsDaysHours(FIRST_MEET, now);
-    elapsedHud.textContent = `İlk buluşmadan geçen: ${months} ay ${days} gün ${hours} saat`;
-  }
-
-  function updateCountdown(){
-    const now = new Date();
-    let ms = ONE_YEAR - now;
-    if (ms < 0) ms = 0;
-    const dayMs  = 24*60*60*1000;
-    const hourMs = 60*60*1000;
-    const minMs  = 60*1000;
-    const days    = Math.floor(ms / dayMs);  ms -= days * dayMs;
-    const hours   = Math.floor(ms / hourMs); ms -= hours * hourMs;
-    const minutes = Math.floor(ms / minMs);
-    countdownHud.textContent = `1 yıla kalan: ${days} gün ${hours} saat ${minutes} dakika`;
-  }
-
-  function startHud(){
-      updateElapsed();
-      updateCountdown();
-      layoutHud();
-      setInterval(() => { updateElapsed(); updateCountdown(); }, 60000);
-    }
-
-    // Mobilde üst üste binmeyi kesin çözen yerleşim fonksiyonu
-    function layoutHud(){
-      const gap = 8; // px
-      if (!elapsedHud || !countdownHud) return;
-      if (window.innerWidth <= 600){
-        const h = elapsedHud.offsetHeight || 44;
-        elapsedHud.style.left = '12px';
-        elapsedHud.style.right = '12px';
-        elapsedHud.style.top = '12px';
-
-        countdownHud.style.left = '12px';
-        countdownHud.style.right = '12px';
-        countdownHud.style.top = (12 + h + gap) + 'px';
-        elapsedHud.style.textAlign = 'center';
-        countdownHud.style.textAlign = 'center';
-      } else {
-        // Masaüstünde orijinal konumlar
-        elapsedHud.style.left = '';
-        elapsedHud.style.right = '';
-        elapsedHud.style.top = '12px';
-        elapsedHud.style.textAlign = '';
-
-        countdownHud.style.left = '';
-        countdownHud.style.right = '';
-        countdownHud.style.top = '12px';
-        countdownHud.style.textAlign = '';
+    (function init(){
+      if (IMAGE_URLS.length){
+        bgA.style.backgroundImage = "url('" + IMAGE_URLS[0] + "')";
+        bgA.style.opacity = '1';
+        bgA.classList.add('zoom');
+        curImg=0; refillImg();
       }
-    }
-
-    window.addEventListener('resize', layoutHud);, 60000); }
-
-  // ===== Controls & Gate =====
-  const nextBtn = $('nextMsgBtn');
-  const imgBtn  = $('shuffleImagesBtn');
-  const gate    = $('gate');
-  const input   = $('gateInput');
-  const submit  = $('gateSubmit');
-
-  let timer = null;
-  function startSlide(){ if (timer) clearInterval(timer); timer = setInterval(setBgFromDeck, BG_SLIDE_INTERVAL); }
-
-  nextBtn.onclick = () => showMsg();
-  imgBtn.onclick  = () => { setBgFromDeck(); startSlide(); };
-
-  // ===== Background music =====
-  const music    = $('bgMusic');
-  const musicBtn = $('musicBtn');
-  let musicPlaying = false;
-
-  if (music) {
-    music.volume = 0.6;
-    // Sayfa açılır açılmaz sesi KAPALI (muted) şekilde çalmayı dene
-    music.play().catch(()=>{});
-  }
-
-  if (musicBtn) {
-    musicBtn.addEventListener('click', async () => {
-      if (!music) return;
-      try {
-        if (!musicPlaying) {
-          await music.play();
-          musicPlaying = true;
-          musicBtn.textContent = '🔇';
-        } else {
-          music.pause();
-          musicPlaying = false;
-          musicBtn.textContent = '🎵';
-        }
-      } catch (err) {
-        console.warn('Müzik çalma hatası:', err);
-        alert('Müzik başlatılamadı. Dosya yolu doğru mu? (love.mp3)');
-      }
-    });
-
-    music.addEventListener('error', () => {
-      alert('Müzik dosyası bulunamadı veya yüklenemedi: love.mp3');
-    });
-  }
-
-  // Yumuşak ses açma yardımcı fonksiyonu
-  function fadeVolume(target = 0.6, duration = 800) {
-    if (!music) return;
-    const start = music.volume;
-    const t0 = performance.now();
-    function step(t){
-      const p = Math.min(1, (t - t0) / duration);
-      music.volume = start + (target - start) * p;
-      if (p < 1) requestAnimationFrame(step);
-    }
-    requestAnimationFrame(step);
-  }
-
-  submit.onclick = async () => {
-    if (input.value === GATE.password) {
-      gate.style.display = 'none';
-      $('app').removeAttribute('aria-hidden');
-      startSlide();
-      startHud();
-      showMsg();
-      if (musicBtn) musicBtn.style.display = 'block';
-      // Giriş bir kullanıcı etkileşimi olduğu için: sesi aç ve otomatik çal
-      if (music) {
-        try {
-          music.muted = false;
-          await music.play();
-          musicPlaying = true;
-          musicBtn.textContent = '🔇';
-          fadeVolume(0.6, 800);
-        } catch (e) {
-          console.warn('Autoplay olmadı, butonla başlanabilir:', e);
-        }
-      }
-    } else {
-      alert('Yanlış şifre 💫');
-    }
-  };
-
-  input.addEventListener('keydown', (e) => { if (e.key === 'Enter') submit.click(); });
-
-  // ===== Init =====
-  (function init(){
-    if (IMAGE_URLS.length){
-      bgA.style.backgroundImage = "url('" + IMAGE_URLS[0] + "')";
-      bgA.style.opacity = '1';
-      bgA.classList.add('zoom');
-      curImg = 0; refillImg();
-    }
-    refillMsg();
-  })();
-</script>
+      refillMsg();
+    })();
+  </script>
 </body>
 </html>
