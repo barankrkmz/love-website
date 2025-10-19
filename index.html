@@ -53,36 +53,14 @@
     .music-btn:active { transform: translateY(0); }
     .music-btn:hover { transform: translateY(-2px); }
     .music-btn:active { transform: translateY(0); }
-
-    /* ===== Responsive sayaç düzeni ===== */
-    .hud {
-    display: flex;
-    flex-wrap: wrap; /* ekran daralınca alta geçsin */
-    justify-content: space-between;
-    align-items: center;
-    gap: 8px; /* iki sayaç arası boşluk */
-    padding: 6px 10px;
+      
+    /* ===== Mobile fix: sayaçları üst üste binmeden sırala ===== */
+    @media (max-width: 600px) {
+      .hud { font-size: 13px; }
+      .hud-left, .hud-right { left: 12px; right: 12px; text-align: center; }
+      .hud-left { top: 12px; }
+      .hud-right { top: 64px; }
     }
-
-    .hud span,
-    #elapsedHud,
-    #countdownHud {
-    flex: 1 1 100%;
-    text-align: center;
-    font-size: clamp(12px, 3vw, 16px);
-    }
-
-    @media (min-width: 600px) {
-    #elapsedHud,
-    #countdownHud {
-    flex: 0 0 auto;
-    text-align: initial;
-    }
-    .hud {
-    flex-wrap: nowrap;
-    }
-    }
-
   </style>
 </head>
 <body>
@@ -250,7 +228,43 @@
     countdownHud.textContent = `1 yıla kalan: ${days} gün ${hours} saat ${minutes} dakika`;
   }
 
-  function startHud(){ updateElapsed(); updateCountdown(); setInterval(() => { updateElapsed(); updateCountdown(); }, 60000); }
+  function startHud(){
+      updateElapsed();
+      updateCountdown();
+      layoutHud();
+      setInterval(() => { updateElapsed(); updateCountdown(); }, 60000);
+    }
+
+    // Mobilde üst üste binmeyi kesin çözen yerleşim fonksiyonu
+    function layoutHud(){
+      const gap = 8; // px
+      if (!elapsedHud || !countdownHud) return;
+      if (window.innerWidth <= 600){
+        const h = elapsedHud.offsetHeight || 44;
+        elapsedHud.style.left = '12px';
+        elapsedHud.style.right = '12px';
+        elapsedHud.style.top = '12px';
+
+        countdownHud.style.left = '12px';
+        countdownHud.style.right = '12px';
+        countdownHud.style.top = (12 + h + gap) + 'px';
+        elapsedHud.style.textAlign = 'center';
+        countdownHud.style.textAlign = 'center';
+      } else {
+        // Masaüstünde orijinal konumlar
+        elapsedHud.style.left = '';
+        elapsedHud.style.right = '';
+        elapsedHud.style.top = '12px';
+        elapsedHud.style.textAlign = '';
+
+        countdownHud.style.left = '';
+        countdownHud.style.right = '';
+        countdownHud.style.top = '12px';
+        countdownHud.style.textAlign = '';
+      }
+    }
+
+    window.addEventListener('resize', layoutHud);, 60000); }
 
   // ===== Controls & Gate =====
   const nextBtn = $('nextMsgBtn');
