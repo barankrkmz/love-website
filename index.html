@@ -53,6 +53,36 @@
     .music-btn:active { transform: translateY(0); }
     .music-btn:hover { transform: translateY(-2px); }
     .music-btn:active { transform: translateY(0); }
+
+    /* ===== Responsive sayaç düzeni ===== */
+    .hud {
+    display: flex;
+    flex-wrap: wrap; /* ekran daralınca alta geçsin */
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px; /* iki sayaç arası boşluk */
+    padding: 6px 10px;
+    }
+
+    .hud span,
+    #elapsedHud,
+    #countdownHud {
+    flex: 1 1 100%;
+    text-align: center;
+    font-size: clamp(12px, 3vw, 16px);
+    }
+
+    @media (min-width: 600px) {
+    #elapsedHud,
+    #countdownHud {
+    flex: 0 0 auto;
+    text-align: initial;
+    }
+    .hud {
+    flex-wrap: nowrap;
+    }
+    }
+
   </style>
 </head>
 <body>
